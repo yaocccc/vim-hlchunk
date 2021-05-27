@@ -1,6 +1,11 @@
 hi IndentLineSign ctermfg=248
 
 let s:update_timer = {}
+
+func HlChunk()
+    call timer_start(100, s:update_timer.clone(bufnr()).task, {'repeat': 1})
+endf
+
 func! s:update_timer.clone(bufnr) abort
     call setbufvar(a:bufnr, 'hl_update_id', getbufvar(a:bufnr, 'hl_update_id', 0) + 1)
     let l:other_timer       = copy(self)
@@ -13,6 +18,14 @@ func! s:update_timer.clone(bufnr) abort
         endif
     endf
     return l:other_timer
+endf
+
+func! s:get_sign_hl_info(bufnr, line)
+	let signs = sign_getplaced(a:bufnr, {'group':'*', 'lnum':a:line})[0].signs
+	if empty(signs) | return [] | endif
+	call sort(signs, {v1, v2->v1.priority < v2.priority})
+	let hl_info = sign_getdefined(signs[0].name)
+	return [trim(hl_info[0].text, ' '), hl_info[0].texthl]
 endf
 
 func! s:searchpairpos_aux(start, middle, end, flags)
@@ -34,15 +47,26 @@ func! s:searchpairpos(start, middle, end)
     return [s:searchpairpos_aux('{', '', '}', ssign[0]), s:searchpairpos_aux('{', '', '}', ssign[1])]
 endf
 
+let s:cache = {'nr': 0, 'beg': 0, 'end': 0}
 func s:hl_chunk(bufnr, id)
-    let line = line('.')
     let [beg, end] = s:searchpairpos('{', '', '}')
 
+    if s:cache == {'nr': a:bufnr, 'beg': beg, 'end': end} | return | endif
     call sign_unplace('*', {'buffer' : a:bufnr, 'id' : a:id})
-    if beg != 0 || !end == 0
-        for idx in range(beg, end)
-            call sign_define('IndentLineSign'.idx, { 'numhl': idx == line ? 'CursorLineNr' : 'IndentLineSign'})
-            call sign_place(a:id, '', 'IndentLineSign'.idx, a:bufnr, {'lnum': idx, 'priority':90})
-        endfor
-    endif
+
+    let s:cache = {'nr': a:bufnr, 'beg': beg, 'end': end}
+    if beg == end | return | endif
+
+    for idx in range(beg, end)
+        let hl_info = s:get_sign_hl_info(a:bufnr, idx)
+        let stext = '│'
+        if idx == beg | let stext = '╭' | endif
+        if idx == end | let stext = '╰' | endif
+        if empty(hl_info)
+            call sign_define('IndentLineSign'.idx, {'text': ' ' . stext, 'texthl': 'IndentLineSign'})
+        else
+            call sign_define('IndentLineSign'.idx, {'text': hl_info[0] . stext, 'texthl': hl_info[1]})
+        endif
+        call sign_place(a:id, '', 'IndentLineSign'.idx, a:bufnr, {'lnum': idx, 'priority':90})
+    endfor
 endf
