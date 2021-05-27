@@ -1,6 +1,11 @@
 hi IndentLineSign ctermfg=248
 
 let s:update_timer = {}
+
+func HlChunk()
+    call timer_start(100, s:update_timer.clone(bufnr()).task, {'repeat': 1})
+endf
+
 func! s:update_timer.clone(bufnr) abort
     call setbufvar(a:bufnr, 'hl_update_id', getbufvar(a:bufnr, 'hl_update_id', 0) + 1)
     let l:other_timer       = copy(self)
