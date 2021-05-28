@@ -2,7 +2,6 @@ hi IndentLineSign ctermfg=248
 
 let s:update_timer = {}
 
-autocmd CursorMoved,CursorMovedI *.cpp call HlChunk()
 
 func HlChunk()
     call timer_start(100, s:update_timer.clone(bufnr()).task, {'repeat': 1})
@@ -29,6 +28,7 @@ func! s:get_sign_hl_info(bufnr, line)
 					\ deepcopy([a:bufnr, a:line]))
 	endif
 
+
 	let signs = sign_getplaced(a:bufnr, {'group':'*', 'lnum':a:line})[0].signs
 	if empty(signs) | return [] | endif
 	call sort(signs, {v1, v2->v1.priority < v2.priority})
@@ -37,6 +37,7 @@ func! s:get_sign_hl_info(bufnr, line)
 	if get(g:, 'chunk_hl_log_disabled', 1) == 0
 		call log#function_end(l:begintime, [trim(hl_info[0].text, ' '), hl_info[0].texthl])
 	endif
+
 
 	return [trim(hl_info[0].text, ' '), hl_info[0].texthl]
 endf
@@ -79,8 +80,8 @@ function! s:hl_chunk_aux(bufnr, id)
     if beg == end
 			return
 		endif
-    if s:cache == {'nr': a:bufnr, 'beg': beg, 'end': end} | echo 1 | return | endif
 
+    if s:cache == {'nr': a:bufnr, 'beg': beg, 'end': end} | return | endif
     call sign_unplace('*', {'buffer' : a:bufnr, 'id' : a:id})
     for idx in range(beg, end)
         let hl_info = s:get_sign_hl_info(a:bufnr, idx)
@@ -94,8 +95,6 @@ function! s:hl_chunk_aux(bufnr, id)
         endif
         call sign_place(a:id, '', 'IndentLineSign'.idx, a:bufnr, {'lnum': idx, 'priority':90})
     endfor
-
-    let s:cache = {'nr': a:bufnr, 'beg': beg, 'end': end}
 endfunction
 
 func s:hl_chunk(bufnr, id)
