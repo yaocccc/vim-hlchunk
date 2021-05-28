@@ -2,6 +2,8 @@ hi IndentLineSign ctermfg=248
 
 let s:update_timer = {}
 
+autocmd CursorMoved,CursorMovedI *.cpp call HlChunk()
+
 func HlChunk()
     call timer_start(100, s:update_timer.clone(bufnr()).task, {'repeat': 1})
 endf
@@ -21,10 +23,21 @@ func! s:update_timer.clone(bufnr) abort
 endf
 
 func! s:get_sign_hl_info(bufnr, line)
+	if get(g:, 'chunk_hl_log_disabled', 1) == 0
+		let l:begintime = log#function_begin(
+					\ 'plugin/hlchunk.vim', 's:get_sign_hl_info', expand('<sflnum>'),
+					\ deepcopy([a:bufnr, a:line]))
+	endif
+
 	let signs = sign_getplaced(a:bufnr, {'group':'*', 'lnum':a:line})[0].signs
 	if empty(signs) | return [] | endif
 	call sort(signs, {v1, v2->v1.priority < v2.priority})
 	let hl_info = sign_getdefined(signs[0].name)
+
+	if get(g:, 'chunk_hl_log_disabled', 1) == 0
+		call log#function_end(l:begintime, [trim(hl_info[0].text, ' '), hl_info[0].texthl])
+	endif
+
 	return [trim(hl_info[0].text, ' '), hl_info[0].texthl]
 endf
 
@@ -36,6 +49,12 @@ func! s:searchpairpos_aux(start, middle, end, flags)
 endf
 
 func! s:searchpairpos(start, middle, end)
+	if get(g:, 'chunk_hl_log_disabled', 1) == 0
+		let l:begintime = log#function_begin(
+					\ 'plugin/hlchunk.vim', 's:searchpairpos', expand('<sflnum>'), 
+					\ deepcopy([a:start, a:middle, a:end]))
+	endif
+
     let c = getline('.')[col('.') - 1]
     if c == a:start
         let ssign = ['zcnWb', 'znW']
@@ -44,14 +63,22 @@ func! s:searchpairpos(start, middle, end)
     else
         let ssign = ['znWb', 'znW']
     endif
-    return [s:searchpairpos_aux('{', '', '}', ssign[0]), s:searchpairpos_aux('{', '', '}', ssign[1])]
+		let l:beg = s:searchpairpos_aux('{', '', '}', ssign[0])
+		let l:end = s:searchpairpos_aux('{', '', '}', ssign[1])
+
+		if get(g:, 'chunk_hl_log_disabled', 1) == 0
+			call log#function_end(l:begintime, [l:beg, l:end])
+		endif
+
+		return [beg, end]
 endf
 
 let s:cache = {'nr': 0, 'beg': 0, 'end': 0}
-func s:hl_chunk(bufnr, id)
-    let [beg, end] = s:searchpairpos('{', '', '}')
-
-    if beg == end | return | endif
+function! s:hl_chunk_aux(bufnr, id)
+		let [beg, end] = s:searchpairpos('{', '', '}')
+    if beg == end
+			return
+		endif
     if s:cache == {'nr': a:bufnr, 'beg': beg, 'end': end} | echo 1 | return | endif
 
     call sign_unplace('*', {'buffer' : a:bufnr, 'id' : a:id})
@@ -68,6 +95,24 @@ func s:hl_chunk(bufnr, id)
         call sign_place(a:id, '', 'IndentLineSign'.idx, a:bufnr, {'lnum': idx, 'priority':90})
     endfor
 
-
     let s:cache = {'nr': a:bufnr, 'beg': beg, 'end': end}
+endfunction
+
+func s:hl_chunk(bufnr, id)
+		if get(g:, 'chunk_hl_log_disabled', 1) == 0
+			let l:begtime = log#program_begin()
+		endif
+
+		call s:hl_chunk_aux(a:bufnr, a:id)
+
+		if get(g:, 'chunk_hl_log_disabled', 1) == 0
+			return log#program_end(l:begtime)
+		endif
 endf
+
+let g:hlchunk_log_file = '/tmp/hlchunk.log'
+
+
+
+command! HlChunkLogEnable call  log#enable()
+command! HlChunkLogDisable call log#disable()
