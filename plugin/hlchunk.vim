@@ -14,7 +14,9 @@ func! s:update_timer.clone(bufnr) abort
     func! l:other_timer.task(timer) abort
         if self.id == getbufvar(self.bufnr, 'hl_update_id', 0)
             call setbufvar(self.bufnr, 'hl_update_count', getbufvar(self.bufnr, 'hl_update_count', 0) + 1)
-            call s:hl_chunk(bufnr(), 999)
+            try
+                call s:hl_chunk(bufnr(), 999)
+            endtry
         endif
     endf
     return l:other_timer
