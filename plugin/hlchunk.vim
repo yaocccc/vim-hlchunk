@@ -20,6 +20,14 @@ func! s:update_timer.clone(bufnr) abort
     return l:other_timer
 endf
 
+func! s:get_sign_hl_info(bufnr, line)
+	let signs = sign_getplaced(a:bufnr, {'group':'*', 'lnum':a:line})[0].signs
+	if empty(signs) | return [] | endif
+	call sort(signs, {v1, v2->v1.priority < v2.priority})
+	let hl_info = sign_getdefined(signs[0].name)
+	return [trim(hl_info[0].text, ' '), hl_info[0].texthl]
+endf
+
 func! s:searchpairpos_aux(start, middle, end, flags)
     return searchpairpos(a:start, a:middle, a:end, a:flags,
         \"synIDattr(synID(line('.'), col('.'), 0), 'name') =~? '" .
@@ -39,15 +47,27 @@ func! s:searchpairpos(start, middle, end)
     return [s:searchpairpos_aux('{', '', '}', ssign[0]), s:searchpairpos_aux('{', '', '}', ssign[1])]
 endf
 
+let s:cache = {'nr': 0, 'beg': 0, 'end': 0}
 func s:hl_chunk(bufnr, id)
-    let line = line('.')
     let [beg, end] = s:searchpairpos('{', '', '}')
 
+    if beg == end | return | endif
+    if s:cache == {'nr': a:bufnr, 'beg': beg, 'end': end} | echo 1 | return | endif
+
     call sign_unplace('*', {'buffer' : a:bufnr, 'id' : a:id})
-    if beg != 0 || !end == 0
-        for idx in range(beg, end)
-            call sign_define('IndentLineSign'.idx, { 'numhl': idx == line ? 'CursorLineNr' : 'IndentLineSign'})
-            call sign_place(a:id, '', 'IndentLineSign'.idx, a:bufnr, {'lnum': idx, 'priority':90})
-        endfor
-    endif
+    for idx in range(beg, end)
+        let hl_info = s:get_sign_hl_info(a:bufnr, idx)
+        let stext = '│'
+        if idx == beg | let stext = '╭' | endif
+        if idx == end | let stext = '╰' | endif
+        if empty(hl_info)
+            call sign_define('IndentLineSign'.idx, {'text': ' ' . stext, 'texthl': 'IndentLineSign'})
+        else
+            call sign_define('IndentLineSign'.idx, {'text': hl_info[0] . stext, 'texthl': hl_info[1]})
+        endif
+        call sign_place(a:id, '', 'IndentLineSign'.idx, a:bufnr, {'lnum': idx, 'priority':90})
+    endfor
+
+
+    let s:cache = {'nr': a:bufnr, 'beg': beg, 'end': end}
 endf
