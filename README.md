@@ -4,6 +4,12 @@ hignlight chunk signcolumn plug of vim & nvim
 
 from: [shibinglanya](https://github.com/shibinglanya)
 
+## USAGE
+
+```usage
+  autocmd CursorMoved,CursorMovedI,TextChanged,TextChangedI,TextChangedP *.ts,*.js,*.go call HlChunk()
+```
+
 ## OPTIONS
 
 ```options
@@ -14,8 +20,11 @@ from: [shibinglanya](https://github.com/shibinglanya)
       let g:hlchunk_time_delay = 100
     " signpriority default 90
       let g:hlchunk_priority = 90
-    " hlchunk_theme default 1
+    " hlchunk_theme_preset default 1
       let g:hlchunk_theme = 1
+    " hlchunk_theme_byuser default NULL
+    " format: sign_texts: char[2][3], usenew: (0|1)[4]
+      let g:hlchunk_theme_byuser = { 'sign_texts': ['╭─', '│ ', '╰>'], 'usenew': [1, 1, 1, 1] },
 
   中文
     " 高亮颜色
@@ -26,12 +35,9 @@ from: [shibinglanya](https://github.com/shibinglanya)
       let g:hlchunk_priority = 90
     " 预设主题 默认为1
       let g:hlchunk_theme = 1
-```
-
-## USAGE
-
-```usage
-  autocmd CursorMoved,CursorMovedI,TextChanged,TextChangedI,TextChangedP *.ts,*.js,*.go call HlChunk()
+    " 用户自定义主题 默认无(用户设置后 以用户设置为主)
+    " 格式: sign_texts: char[2][3], usenew: (0|1)[4]
+      let g:hlchunk_theme_byuser = { 'sign_texts': ['╭─', '│ ', '╰>'], 'usenew': [1, 1, 1, 1] },
 ```
 
 ## THEMES
