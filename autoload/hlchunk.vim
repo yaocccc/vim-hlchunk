@@ -29,8 +29,7 @@ let s:preset_themes = [
             \   { 'sign_texts': [' ╭', ' │', ' ╰'], 'usenew': [0, 1, 0, 1] },
             \   { 'sign_texts': [' ╭', ' │', ' ╰'], 'usenew': [0, 0, 0, 1] }
             \ ]
-let s:run_theme = exists(g:hlchunk_theme_byuser) ? g:hlchunk_theme_byuser :
-            \ s:preset_themes[s:theme - 1]
+let s:run_theme = exists('g:hlchunk_theme_byuser') ? g:hlchunk_theme_byuser : s:preset_themes[s:theme - 1]
 
 " 入口func
 func! hlchunk#hl_chunk(bufnr, id)
