@@ -1,6 +1,6 @@
 # VIM HL CHUNK
 
-hignlight chunk numbercolumn plug of vim & nvim
+hignlight chunk signcolumn plug of vim & nvim
 
 from: [shibinglanya](https://github.com/shibinglanya)
 
@@ -12,27 +12,20 @@ from: [shibinglanya](https://github.com/shibinglanya)
       au VimEnter * hi IndentLineSign ctermfg=248
     " delay default 100
       let g:hlchunk_time_delay = 100
-    " sign texts
-      let g:hlchunk_stexts = ['╭', '│', '╰']
-    " mode(default sc2): 
-    " sc1: signcolumn1, sc2: signcolumn2, nc: numbercolumn
-      let g:hlchunk_mode = 'sc2'
     " signpriority default 90
       let g:hlchunk_priority = 90
-
+    " hlchunk_theme default 1
+      let g:hlchunk_theme = 1
 
   中文
     " 高亮颜色
       au VimEnter * hi IndentLineSign ctermfg=248
     " 延时 默认为100
       let g:hlchunk_time_delay = 100
-    " signcolumn模式下 的 标记符号
-      let g:hlchunk_stexts = ['╭', '│', '╰']
-    " 模式(默认为sc2):
-    " sc1: signcolumn1, sc2: signcolumn2, nc: numbercolumn
-      let g:hlchunk_mode = 'sc2'
     " 优先级 默认为90
       let g:hlchunk_priority = 90
+    " 预设主题 默认为1
+      let g:hlchunk_theme = 1
 ```
 
 ## USAGE
@@ -41,18 +34,26 @@ from: [shibinglanya](https://github.com/shibinglanya)
   autocmd CursorMoved,CursorMovedI,TextChanged,TextChangedI,TextChangedP *.ts,*.js,*.go call HlChunk()
 ```
 
-## SHOW MODES
+## THEMES
 
-### sc1
+```plaintext
+  old: 优先用老的 new: 优先用新的
 
-![avatar](./screenshots/hc1.png)
+  1 sign_texts: ['╭─', '│ ', '╰>'], 起始位置 = [new, new], 中间位置 = [old, new]
+  2 sign_texts: ['╭─', '│ ', '╰>'], 起始位置 = [old, new], 中间位置 = [old, new]
+  3 sign_texts: ['╭─', '│ ', '╰>'], 起始位置 = [new, new], 中间位置 = [new, new]
 
-### sc2
+  4 sign_texts: ['│ ', '│ ', '│ '], 起始位置 = [new, old], 中间位置 = [new, old]
+  5 sign_texts: ['│ ', '│ ', '│ '], 起始位置 = [new, old], 中间位置 = [old, old]
 
-![avatar](./screenshots/hc2.png)
+  6 sign_texts: [' │', ' │', ' │'], 起始位置 = [old, new], 中间位置 = [old, new]
+  7 sign_texts: [' │', ' │', ' │'], 起始位置 = [old, old], 中间位置 = [old, new]
 
-### num
+  8 sign_texts: ['╭ ', '│ ', '╰ '], 起始位置 = [new, old], 中间位置 = [new, old]
+  9 sign_texts: ['╭ ', '│ ', '╰ '], 起始位置 = [new, old], 中间位置 = [old, old]
 
-![avatar](./screenshots/hc3.png)
+  10 sign_texts: [' ╭', ' │', ' ╰'], 起始位置 = [old, new], 中间位置 = [old, new]
+  11 sign_texts: [' ╭', ' │', ' ╰'], 起始位置 = [old, old], 中间位置 = [old, new]
+```
 
 ## ENJOY IT
