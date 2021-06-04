@@ -23,7 +23,7 @@ from: [shibinglanya](https://github.com/shibinglanya)
     " hlchunk_theme_preset default 1
       let g:hlchunk_theme = 1
     " hlchunk_theme_byuser default NULL
-    " format: sign_texts: char[2][3], usenew: (0|1)[4]
+    " format: sign_texts: char[2][3], usenew: (0|1)[4] " [start end, middle]
       let g:hlchunk_theme_byuser = { 'sign_texts': ['╭─', '│ ', '╰>'], 'usenew': [1, 1, 1, 1] },
 
   中文
@@ -36,30 +36,30 @@ from: [shibinglanya](https://github.com/shibinglanya)
     " 预设主题 默认为1
       let g:hlchunk_theme = 1
     " 用户自定义主题 默认无(用户设置后 以用户设置为主)
-    " 格式: sign_texts: char[2][3], usenew: (0|1)[4]
+    " 格式: sign_texts: char[2][3], usenew: (0|1)[4] " [起止,中间]
       let g:hlchunk_theme_byuser = { 'sign_texts': ['╭─', '│ ', '╰>'], 'usenew': [1, 1, 1, 1] },
 ```
 
 ## THEMES
 
 ```plaintext
-  old: 优先用老的 new: 优先用新的
+  [new, new] 代表 signcolumn 列1 列2 都优先用 hlchunk 的sign, old表示优先用原来就在的sign
 
-  1 sign_texts: ['╭─', '│ ', '╰>'], 起始位置 = [new, new], 中间位置 = [old, new]
-  2 sign_texts: ['╭─', '│ ', '╰>'], 起始位置 = [old, new], 中间位置 = [old, new]
-  3 sign_texts: ['╭─', '│ ', '╰>'], 起始位置 = [new, new], 中间位置 = [new, new]
+  1 sign_texts: ['╭─', '│ ', '╰>'], [start, middle, end] = [ [new, new], [old, new], [new, new] ]
+  2 sign_texts: ['╭─', '│ ', '╰>'], [start, middle, end] = [ [old, new], [old, new], [old, new] ]
+  3 sign_texts: ['╭─', '│ ', '╰>'], [start, middle, end] = [ [new, new], [new, new], [new, new] ]
 
-  4 sign_texts: ['│ ', '│ ', '│ '], 起始位置 = [new, old], 中间位置 = [new, old]
-  5 sign_texts: ['│ ', '│ ', '│ '], 起始位置 = [new, old], 中间位置 = [old, old]
+  4 sign_texts: ['│ ', '│ ', '│ '], [start, middle, end] = [ [new, old], [new, old], [new, old] ]
+  5 sign_texts: ['│ ', '│ ', '│ '], [start, middle, end] = [ [new, old], [old, old], [new, old] ]
 
-  6 sign_texts: [' │', ' │', ' │'], 起始位置 = [old, new], 中间位置 = [old, new]
-  7 sign_texts: [' │', ' │', ' │'], 起始位置 = [old, old], 中间位置 = [old, new]
+  6 sign_texts: [' │', ' │', ' │'], [start, middle, end] = [ [old, new], [old, new], [old, new] ]
+  7 sign_texts: [' │', ' │', ' │'], [start, middle, end] = [ [old, old], [old, new], [old, old] ]
 
-  8 sign_texts: ['╭ ', '│ ', '╰ '], 起始位置 = [new, old], 中间位置 = [new, old]
-  9 sign_texts: ['╭ ', '│ ', '╰ '], 起始位置 = [new, old], 中间位置 = [old, old]
+  8 sign_texts: ['╭ ', '│ ', '╰ '], [start, middle, end] = [ [new, old], [new, old], [new, old] ]
+  9 sign_texts: ['╭ ', '│ ', '╰ '], [start, middle, end] = [ [new, old], [old, old], [new, old] ]
 
-  10 sign_texts: [' ╭', ' │', ' ╰'], 起始位置 = [old, new], 中间位置 = [old, new]
-  11 sign_texts: [' ╭', ' │', ' ╰'], 起始位置 = [old, old], 中间位置 = [old, new]
+  10 sign_texts: [' ╭', ' │', ' ╰'], [start, middle, end] = [ [old, new], [old, new], [old, new] ]
+  11 sign_texts: [' ╭', ' │', ' ╰'], [start, middle, end] = [ [old, old], [old, new], [old, old] ]
 ```
 
 ## ENJOY IT

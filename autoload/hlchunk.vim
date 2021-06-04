@@ -1,18 +1,20 @@
-" 1 sign_texts: ['╭─', '│ ', '╰>'], 起始位置 = [new, new], 中间位置 = [old, new], old: 优先用老的 new: 优先用新的
-" 2 sign_texts: ['╭─', '│ ', '╰>'], 起始位置 = [old, new], 中间位置 = [old, new], old: 优先用老的 new: 优先用新的
-" 3 sign_texts: ['╭─', '│ ', '╰>'], 起始位置 = [new, new], 中间位置 = [new, new], old: 优先用老的 new: 优先用新的
+" [new, new] 代表 signcolumn 列1 列2 都优先用 hlchunk 的sign, old表示优先用原来就在的sign
+" 预设主题列表 let g:hlchunk_theme = 1
+" 1 sign_texts: ['╭─', '│ ', '╰>'], [start, middle, end] = [ [new, new], [old, new], [new, new] ]
+" 2 sign_texts: ['╭─', '│ ', '╰>'], [start, middle, end] = [ [old, new], [old, new], [old, new] ]
+" 3 sign_texts: ['╭─', '│ ', '╰>'], [start, middle, end] = [ [new, new], [new, new], [new, new] ]
 
-" 4 sign_texts: ['│ ', '│ ', '│ '], 起始位置 = [new, old], 中间位置 = [new, old], old: 优先用老的 new: 优先用新的
-" 5 sign_texts: ['│ ', '│ ', '│ '], 起始位置 = [new, old], 中间位置 = [old, old], old: 优先用老的 new: 优先用新的
+" 4 sign_texts: ['│ ', '│ ', '│ '], [start, middle, end] = [ [new, old], [new, old], [new, old] ]
+" 5 sign_texts: ['│ ', '│ ', '│ '], [start, middle, end] = [ [new, old], [old, old], [new, old] ]
 
-" 6 sign_texts: [' │', ' │', ' │'], 起始位置 = [old, new], 中间位置 = [old, new], old: 优先用老的 new: 优先用新的
-" 7 sign_texts: [' │', ' │', ' │'], 起始位置 = [old, old], 中间位置 = [old, new], old: 优先用老的 new: 优先用新的
+" 6 sign_texts: [' │', ' │', ' │'], [start, middle, end] = [ [old, new], [old, new], [old, new] ]
+" 7 sign_texts: [' │', ' │', ' │'], [start, middle, end] = [ [old, old], [old, new], [old, old] ]
 
-" 8 sign_texts: ['╭ ', '│ ', '╰ '], 起始位置 = [new, old], 中间位置 = [new, old], old: 优先用老的 new: 优先用新的
-" 9 sign_texts: ['╭ ', '│ ', '╰ '], 起始位置 = [new, old], 中间位置 = [old, old], old: 优先用老的 new: 优先用新的
+" 8 sign_texts: ['╭ ', '│ ', '╰ '], [start, middle, end] = [ [new, old], [new, old], [new, old] ]
+" 9 sign_texts: ['╭ ', '│ ', '╰ '], [start, middle, end] = [ [new, old], [old, old], [new, old] ]
 
-" 10 sign_texts: [' ╭', ' │', ' ╰'], 起始位置 = [old, new], 中间位置 = [old, new], old: 优先用老的 new: 优先用新的
-" 11 sign_texts: [' ╭', ' │', ' ╰'], 起始位置 = [old, old], 中间位置 = [old, new], old: 优先用老的 new: 优先用新的
+" 10 sign_texts: [' ╭', ' │', ' ╰'], [start, middle, end] = [ [old, new], [old, new], [old, new] ]
+" 11 sign_texts: [' ╭', ' │', ' ╰'], [start, middle, end] = [ [old, old], [old, new], [old, old] ]
 
 let s:priority = get(g:, 'hlchunk_priority', 90)
 let s:theme = get(g:, 'hlchunk_theme', 1)
@@ -39,7 +41,11 @@ func! hlchunk#hl_chunk(bufnr, id)
     if beg == end | return | endif
     if beg == 0 || end == 0 | return | endif
 
-    for idx in range(beg, end)
+    " 避免渲染行数过长造成的卡顿 - 只渲染屏幕展示行+-10行的区域
+    let [startl, endl] = end - beg > 100
+        \ ? [max([beg, line('w0') - 10]), min([end, line('w$') + 10])]
+        \ : [beg, end]
+    for idx in range(startl, endl)
         let new_sign_info = s:get_new_sign_info(a:bufnr, beg, end, idx)
         call sign_define('IndentLineSign'.idx, {'text': new_sign_info[0], 'texthl': new_sign_info[1]})
         call sign_place(a:id, '', 'IndentLineSign'.idx, a:bufnr, {'lnum': idx, 'priority': s:priority})
@@ -98,13 +104,13 @@ endf
 
 " new: char[2][3]
 " old: char[2]
-" usenew: bool[4] 起始位置[bool, bool], 中间位置[bool, bool]
+" usenew: bool[4] 起止位置[bool, bool], 中间位置[bool, bool]
 " position: 0beg 1middle 2end
 " return char[2]
 func! s:get_new_sign_text(new, old, usenew, position)
     let [new, old] = [a:new[a:position], a:old]
     let text = ''
-    if a:position != 1 " 起始位置
+    if a:position != 1 " 起止位置
         let text .= a:usenew[0] ? s:get_first_bypart(new, old, 0) : s:get_first_bypart(old, new, 0)
         let text .= a:usenew[1] ? s:get_first_bypart(new, old, 1) : s:get_first_bypart(old, new, 1)
     else " 中间位置
