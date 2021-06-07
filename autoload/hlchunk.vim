@@ -37,7 +37,7 @@ let s:run_theme = exists('g:hlchunk_theme_byuser') ? g:hlchunk_theme_byuser : s:
 func! hlchunk#hl_chunk(bufnr, id)
     call sign_unplace('*', {'buffer' : a:bufnr, 'id' : a:id})
 
-    let [beg, end] = s:searchpairpos('{', '', '}')
+    let [beg, end] = s:getpairpos()
     if beg == end | return | endif
     if beg == 0 || end == 0 | return | endif
 
@@ -52,24 +52,10 @@ func! hlchunk#hl_chunk(bufnr, id)
     endfor
 endf
 
-func! s:searchpairpos_aux(start, middle, end, flags)
-    return searchpairpos(a:start, a:middle, a:end, a:flags,
-        \"synIDattr(synID(line('.'), col('.'), 0), 'name') =~? '" .
-        \'string\|cppRainbow_lv\d_r\d\|comment' .
-        \"'")[0]
-endf
-
-func! s:searchpairpos(start, middle, end) " [int, int]
+func! s:getpairpos() " [int, int]
     let c = getline('.')[col('.') - 1]
-    if c == a:start
-        let ssign = ['zcnWb', 'znW']
-    elseif c == a:end
-        let ssign = ['znWb', 'zcnW']
-    else
-        let ssign = ['znWb', 'znW']
-    endif
-    let l:beg = s:searchpairpos_aux('{', '', '}', ssign[0])
-    let l:end = s:searchpairpos_aux('{', '', '}', ssign[1])
+    let l:beg = searchpair('{', '', '}', 'znWb' . (c == '{' ? 'c' : ''))
+    let l:end = searchpair('{', '', '}', 'znW' . (c == '}' ? 'c' : ''))
     return [beg, end]
 endf
 
