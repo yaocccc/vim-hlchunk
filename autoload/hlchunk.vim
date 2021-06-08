@@ -9,12 +9,13 @@
 
 " 6 sign_texts: [' │', ' │', ' │'], [start, middle, end] = [ [old, new], [old, new], [old, new] ]
 " 7 sign_texts: [' │', ' │', ' │'], [start, middle, end] = [ [old, old], [old, new], [old, old] ]
+" 8 sign_texts: [' │', ' │', ' │'], [start, middle, end] = [ [old, old], [old, old], [old, old] ]
 
-" 8 sign_texts: ['╭ ', '│ ', '╰ '], [start, middle, end] = [ [new, old], [new, old], [new, old] ]
-" 9 sign_texts: ['╭ ', '│ ', '╰ '], [start, middle, end] = [ [new, old], [old, old], [new, old] ]
+" 9 sign_texts: ['╭ ', '│ ', '╰ '], [start, middle, end] = [ [new, old], [new, old], [new, old] ]
+" 10 sign_texts: ['╭ ', '│ ', '╰ '], [start, middle, end] = [ [new, old], [old, old], [new, old] ]
 
-" 10 sign_texts: [' ╭', ' │', ' ╰'], [start, middle, end] = [ [old, new], [old, new], [old, new] ]
-" 11 sign_texts: [' ╭', ' │', ' ╰'], [start, middle, end] = [ [old, old], [old, new], [old, old] ]
+" 11 sign_texts: [' ╭', ' │', ' ╰'], [start, middle, end] = [ [old, new], [old, new], [old, new] ]
+" 12 sign_texts: [' ╭', ' │', ' ╰'], [start, middle, end] = [ [old, old], [old, new], [old, old] ]
 
 let s:priority = get(g:, 'hlchunk_priority', 90)
 let s:theme = get(g:, 'hlchunk_theme', 1)
@@ -26,6 +27,7 @@ let s:preset_themes = [
             \   { 'sign_texts': ['│ ', '│ ', '│ '], 'usenew': [1, 0, 0, 0] },
             \   { 'sign_texts': [' │', ' │', ' │'], 'usenew': [0, 1, 0, 1] },
             \   { 'sign_texts': [' │', ' │', ' │'], 'usenew': [0, 0, 0, 1] },
+            \   { 'sign_texts': [' │', ' │', ' │'], 'usenew': [0, 0, 0, 0] },
             \   { 'sign_texts': ['╭ ', '│ ', '╰ '], 'usenew': [1, 0, 1, 0] },
             \   { 'sign_texts': ['╭ ', '│ ', '╰ '], 'usenew': [1, 0, 0, 0] },
             \   { 'sign_texts': [' ╭', ' │', ' ╰'], 'usenew': [0, 1, 0, 1] },
