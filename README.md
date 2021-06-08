@@ -4,6 +4,8 @@ hignlight chunk signcolumn plug of vim & nvim
 
 from: [shibinglanya](https://github.com/shibinglanya)
 
+![sc](./screenshots/01.png)
+
 ## USAGE
 
 ```usage
@@ -61,5 +63,3 @@ from: [shibinglanya](https://github.com/shibinglanya)
   10 sign_texts: [' ╭', ' │', ' ╰'], [start, middle, end] = [ [old, new], [old, new], [old, new] ]
   11 sign_texts: [' ╭', ' │', ' ╰'], [start, middle, end] = [ [old, old], [old, new], [old, old] ]
 ```
-
-## ENJOY IT
