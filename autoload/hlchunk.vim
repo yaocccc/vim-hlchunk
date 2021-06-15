@@ -43,9 +43,9 @@ func! hlchunk#hl_chunk(bufnr, id)
     if beg == end | return | endif
     if beg == 0 || end == 0 | return | endif
 
-    " 避免渲染行数过长造成的卡顿 - 只渲染屏幕展示行+-10行的区域
+    " 避免渲染行数过长造成的卡顿 - 只渲染屏幕展示行+-50行的区域
     let [startl, endl] = end - beg > 100
-        \ ? [max([beg, line('w0') - 10]), min([end, line('w$') + 10])]
+        \ ? [max([beg, line('w0') - 50]), min([end, line('w$') + 50])]
         \ : [beg, end]
     for idx in range(startl, endl)
         let new_sign_info = s:get_new_sign_info(a:bufnr, beg, end, idx)
