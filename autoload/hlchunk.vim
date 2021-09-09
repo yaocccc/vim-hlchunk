@@ -47,6 +47,9 @@ func! hlchunk#hl_chunk(bufnr, id)
     let [startl, endl] = end - beg > 100
         \ ? [max([beg, line('w0') - 50]), min([end, line('w$') + 50])]
         \ : [beg, end]
+
+    let [b:hlbeg, b:hlend] = [startl, endl] " 缓存开始和结束行 提升性能
+
     for idx in range(startl, endl)
         let new_sign_info = s:get_new_sign_info(a:bufnr, beg, end, idx)
         call sign_define('IndentLineSign'.idx, {'text': new_sign_info[0], 'texthl': new_sign_info[1]})

@@ -1,11 +1,14 @@
-command! HlChunkLogEnable  call log#enable()
-command! HlChunkLogDisable call log#disable()
-
 hi IndentLineSign ctermfg=248
 let s:update_timer = {}
 let s:delay = get(g:, 'hlchunk_time_delay', 100)
 
+let [b:hlbeg, b:hlend] = [0, 0]
+au TextChanged,TextChangedI,TextChangedP * let [b:hlbeg, b:hlend] = [0, 0]
+
 func HlChunk()
+    if [b:hlbeg, b:hlend] != [0, 0] && line('.') > b:hlbeg && line('.') < b:hlend
+        return
+    endif
     call timer_start(s:delay, s:update_timer.clone(bufnr()).task, {'repeat': 1})
 endf
 
