@@ -6,20 +6,16 @@ from: [shibinglanya](https://github.com/shibinglanya)
 
 ![sc](./screenshots/01.png)
 
-## USAGE
-
-```usage
-  autocmd CursorMoved,CursorMovedI,TextChanged,TextChangedI,TextChangedP *.ts,*.js,*.go call HlChunk()
-```
-
 ## OPTIONS
 
 ```options
   ENGLISH
+    " what files are supported, default '*.ts,*.js,*.json,*.go,*.c'
+      let g:hlchunk_files = '*.ts,*.js,*.json,*.go,*.c'
     " highlight
       au VimEnter * hi IndentLineSign ctermfg=248
-    " delay default 100
-      let g:hlchunk_time_delay = 100
+    " delay default 50
+      let g:hlchunk_time_delay = 50
     " signpriority default 90
       let g:hlchunk_priority = 90
     " hlchunk_theme_preset default 1
@@ -29,10 +25,12 @@ from: [shibinglanya](https://github.com/shibinglanya)
       let g:hlchunk_theme_byuser = { 'sign_texts': ['╭─', '│ ', '╰>'], 'usenew': [1, 1, 1, 1] },
 
   中文
+    " 支持哪些文件 默认为 '*.ts,*.js,*.json,*.go,*.c'
+      let g:hlchunk_files = '*.ts,*.js,*.json,*.go,*.c'
     " 高亮颜色
       au VimEnter * hi IndentLineSign ctermfg=248
-    " 延时 默认为100
-      let g:hlchunk_time_delay = 100
+    " 延时 默认为50
+      let g:hlchunk_time_delay = 50
     " 优先级 默认为90
       let g:hlchunk_priority = 90
     " 预设主题 默认为1

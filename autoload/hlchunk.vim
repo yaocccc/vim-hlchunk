@@ -36,8 +36,9 @@ let s:preset_themes = [
 let s:run_theme = exists('g:hlchunk_theme_byuser') ? g:hlchunk_theme_byuser : s:preset_themes[s:theme - 1]
 
 " 入口func
-func! hlchunk#hl_chunk(bufnr, id)
-    call sign_unplace('*', {'buffer' : a:bufnr, 'id' : a:id})
+func! hlchunk#hl_chunk(...)
+    let bufnr = bufnr()
+    call sign_unplace('*', {'buffer' : bufnr, 'id' : 999})
 
     let [beg, end] = s:getpairpos()
     if beg == end | return | endif
@@ -51,9 +52,9 @@ func! hlchunk#hl_chunk(bufnr, id)
     let [b:hlbeg, b:hlend] = [startl, endl] " 缓存开始和结束行 提升性能
 
     for idx in range(startl, endl)
-        let new_sign_info = s:get_new_sign_info(a:bufnr, beg, end, idx)
+        let new_sign_info = s:get_new_sign_info(bufnr, beg, end, idx)
         call sign_define('IndentLineSign'.idx, {'text': new_sign_info[0], 'texthl': new_sign_info[1]})
-        call sign_place(a:id, '', 'IndentLineSign'.idx, a:bufnr, {'lnum': idx, 'priority': s:priority})
+        call sign_place(999, '', 'IndentLineSign'.idx, bufnr, {'lnum': idx, 'priority': s:priority})
     endfor
 endf
 
